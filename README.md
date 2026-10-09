@@ -1,13 +1,23 @@
 # Parcial FortiGate – Gregorys Morel Duluc (2025-0035)
 
-**Video de demostración:** https://youtu.be/xmxBJhgFVKc https://youtu.be/xmxBJhgFVKc 
-**Video de demostración:** https://youtu.be/xmxBJhgFVKc https://youtu.be/xmxBJhgFVKc 
+**Video de demostración:** https://youtu.be/xmxBJhgFVKc https://youtu.be/xmxBJhgFVKc https://youtu.be/xmxBJhgFVKc https://youtu.be/xmxBJhgFVKc
 
 ## Propósito del laboratorio
 Diseñar e implementar una infraestructura de red segura con FortiGate (FortiOS 7.0.9), configurado por interfaz gráfica, que aplique segmentación por VLANs con direccionamiento basado en la matrícula, salida a Internet con NAT, microsegmentación del Web Server, prevención de SQL Injection con cuarentena del atacante y filtrado web con página de violación de política.
 
 ## Topología
 ![Topología](Imagenes/01-topologia.png)
+
+```mermaid
+flowchart TB
+    INET((Internet)) --- ISP["ISP<br/>20.25.35.1/24"]
+    ISP ---|"WAN 20.25.35.0/24"| FG["FG-FW<br/>port1 20.25.35.2"]
+    FG ---|"port2 trunk 802.1Q"| V10["VLAN 10 Usuarios<br/>10.20.25.0/25 · GW .1 · DHCP"]
+    FG ---|"port2 trunk 802.1Q"| V20["VLAN 20 Administrativos<br/>10.20.25.128/25 · GW .129"]
+    FG ---|"port3 10.20.35.1/29"| WEB["WEB<br/>10.20.35.2"]
+    FG ---|"port4 10.20.35.9/29"| DB["DB<br/>10.20.35.10"]
+    WEB -. "solo TCP 3306" .-> DB
+```
 
 | Equipo | Función |
 |---|---|
