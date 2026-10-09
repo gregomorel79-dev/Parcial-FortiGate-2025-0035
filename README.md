@@ -1,12 +1,12 @@
 # Parcial FortiGate – Gregorys Morel Duluc (2025-0035)
 
-**Video de demostración:** https://youtu.be/xmxBJhgFVKc https://youtu.be/xmxBJhgFVKc https://youtu.be/xmxBJhgFVKc https://youtu.be/xmxBJhgFVKc
+**Video de demostración:** https://youtu.be/xmxBJhgFVKc
 
 ## Propósito del laboratorio
 Diseñar e implementar una infraestructura de red segura con FortiGate (FortiOS 7.0.9), configurado por interfaz gráfica, que aplique segmentación por VLANs con direccionamiento basado en la matrícula, salida a Internet con NAT, microsegmentación del Web Server, prevención de SQL Injection con cuarentena del atacante y filtrado web con página de violación de política.
 
 ## Topología
-![Topología](Imagenes/01-topologia.png)
+![Topología](imagenes/01-topologia.png)
 
 ```mermaid
 flowchart TB
@@ -41,28 +41,30 @@ Los octetos 20.25 y 35 provienen de la matrícula 2025-0035. La red de servidore
 ## Implementación
 
 ### Hostname
-![Hostname](Imagenes/02-hostname.png)
+![Hostname](imagenes/02-hostname.png)
 
 ### Interfaces
-![Interfaces](Imagenes/03-interfaces.png)
-![VLANs en port2](Imagenes/03b-vlans.png)
+![Interfaces](imagenes/03-interfaces.png)
+![VLANs en port2](imagenes/03b-vlans.png)
 
 ### VLAN 10 (/25 con DHCP) y VLAN 20 sobre trunk 802.1Q en port2
-![VLAN 10](Imagenes/04a-vlan10.png)
-![DHCP VLAN 10](Imagenes/04-vlan10-dhcp.png)
-![VLAN 20](Imagenes/05-vlan20.png)
+![VLAN 10](imagenes/04a-vlan10.png)
+![DHCP VLAN 10](imagenes/04-vlan10-dhcp.png)
+![VLAN 20](imagenes/05-vlan20.png)
 
 ### Ruta por defecto y NAT
 Ruta 0.0.0.0/0 hacia el ISP (20.25.35.1). Las políticas de VLAN 10 y VLAN 20 hacia port1 aplican NAT con la IP de la interfaz de salida.
-![Ruta por defecto](Imagenes/06-ruta.png)
-![Política con NAT](Imagenes/09c-politica-v10-internet.png)
+
+![Ruta por defecto](imagenes/06-ruta.png)
+![Política con NAT](imagenes/09c-politica-v10-internet.png)
 
 ### Objetos y servicio
 Objetos de host para WEB y DB, objetos FQDN de los endpoints de actualización agrupados en UPDATES, y servicio MARIADB (TCP 3306).
-![Objeto DB](Imagenes/07-objetos.png)
-![FQDN Debian](Imagenes/07b-fqdn.png)
-![FQDN Ubuntu](Imagenes/07c-fqdn.png)
-![Servicio MARIADB](Imagenes/08-servicio-mariadb.png)
+
+![Objeto DB](imagenes/07-objetos.png)
+![FQDN Debian](imagenes/07b-fqdn.png)
+![FQDN Ubuntu](imagenes/07c-fqdn.png)
+![Servicio MARIADB](imagenes/08-servicio-mariadb.png)
 
 ### Políticas de firewall
 | Política | Origen → Destino | Servicio | Acción |
@@ -75,29 +77,32 @@ Objetos de host para WEB y DB, objetos FQDN de los endpoints de actualización a
 | WEB-UPDATES | WEB → UPDATES | HTTP, HTTPS, DNS | Accept + NAT |
 | WEB-DENY | WEB → port1 | ALL | Deny + log |
 
-![Políticas](Imagenes/09-politicas.png)
-![WEB-DENY](Imagenes/09b-web-deny.png)
+![Políticas](imagenes/09-politicas.png)
+![WEB-DENY](imagenes/09b-web-deny.png)
 
 ### IPS contra SQL Injection con cuarentena
 Perfil IPS-SQLI con las firmas de SQL Injection en acción Quarantine (5 minutos), aplicado a las políticas hacia el Web Server.
-![IPS-SQLI](Imagenes/10-ips.png)
-![Firmas SQL Injection](Imagenes/10b-firmas.png)
+
+![IPS-SQLI](imagenes/10-ips.png)
+![Firmas SQL Injection](imagenes/10b-firmas.png)
 
 ### Web Filter y página de violación de política
 Perfil WF-INVENTARIO que bloquea 10.20.35.2/inventario, aplicado a la política de la VLAN 10.
-![WF-INVENTARIO](Imagenes/11-webfilter.png)
-![Perfiles Web Filter](Imagenes/11b-webfilter-lista.png)
+
+![WF-INVENTARIO](imagenes/11-webfilter.png)
+![Perfiles Web Filter](imagenes/11b-webfilter-lista.png)
 
 ### Servidor web HTTP
-![HTTP](Imagenes/12-web-http.png)
+![HTTP](imagenes/12-web-http.png)
 
 ### Microsegmentación: salida del Web Server bloqueada
 El Web Server no puede hacer ICMP ni navegar a Internet abierto; solo se permite 3306 hacia DB y los endpoints de actualización.
-![Bloqueos WEB](Imagenes/13-web-bloqueos.png)
-![Log de bloqueos](Imagenes/15-log.png)
+
+![Bloqueos WEB](imagenes/13-web-bloqueos.png)
+![Log de bloqueos](imagenes/15-log.png)
 
 ### Salida a Internet: ping y traceroute
-![Ping y traceroute](Imagenes/14-internet-traceroute.png)
+![Ping y traceroute](imagenes/14-internet-traceroute.png)
 
 ## Configuraciones
 | Archivo | Equipo |
